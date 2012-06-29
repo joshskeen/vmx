@@ -1,0 +1,55 @@
+body{
+	margin:0;
+	border:0;
+	padding:0;
+	height: 100%;
+	background-color:black !important;
+}
+
+html {
+	height: 100%;
+}
+
+#container{
+	height:99%;
+	width:100%;
+	position:absolute;
+	z-index:3;
+}
+
+.video_element{
+	border:1px solid red;
+}
+
+
+.ui_overlay{
+	width:99%;
+	position:absolute;
+	z-index:5;
+	top:0;
+}
+
+.labeltext{
+	color:green;
+	background-color:black;
+	font-weight:bold;
+}
+
+.active{
+	border-bottom:3px solid blue !important;
+	border-top:3px solid blue !important;
+}
+
+.filename{
+	font-size:9px;
+	color:white;
+}
+
+#presentation_mode{
+	width:100%;
+	height:100%;
+	position:absolute;
+	z-index:2;
+	top:0;
+	left:0;
+}
