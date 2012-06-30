@@ -28,5 +28,5 @@ you can remove connections between clips by clicking on the line and pressing x
 k toggles the keyframe editor display different keyframes on different clips
 
 example of use: [available here on vimeo!](https://vimeo.com/41874554)
-
-<iframe src="http://player.vimeo.com/video/44956664" width="500" height="281" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
+<iframe width="500" height="281" src="http://player.vimeo.com/video/44956664" frameborder="0"> </iframe>
+.
