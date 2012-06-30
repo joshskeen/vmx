@@ -29,4 +29,4 @@ k toggles the keyframe editor display different keyframes on different clips
 
 example of use: [available here on vimeo!](https://vimeo.com/41874554)
 
-<iframe src="http://player.vimeo.com/video/44956664" width="500" height="281" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe> <p><a href="http://vimeo.com/44956664">reading midi signals into the browser (via node.js)</a> from <a href="http://vimeo.com/user2030965">mutexKid</a> on <a href="http://vimeo.com">Vimeo</a>.</p>
+<iframe src="http://player.vimeo.com/video/44956664" width="500" height="281" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
