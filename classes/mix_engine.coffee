@@ -22,6 +22,10 @@ class MixEngine
 		@videoSources = []
 		for vidsource in videosources
 			@videoSources.push('./vids/' + vidsource);
+	setFilter:(filterCode) -> 
+		console.log filterCode
+		if @activeVideo?
+			@activeVideo.videoFilter = filterCode
 	toggleLoop: -> 
 		if @activeVideo?
 			if @activeVideo.loop == false

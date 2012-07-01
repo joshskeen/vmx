@@ -59,7 +59,7 @@
         max: 2000,
         value: _self.overlay_width,
         range: false,
-        step: .1,
+        step: 1,
         slide: function(event, ui) {
           _self.overlay_width = ui.value;
           return $(this).siblings(".overlaywidth").text("canvas width: " + _self.overlay_width);
@@ -73,7 +73,7 @@
         max: 2000,
         value: _self.overlay_height,
         range: false,
-        step: .1,
+        step: 1,
         slide: function(event, ui) {
           _self.overlay_height = ui.value;
           return $(this).siblings(".overlayheight").text("canvas height: " + _self.overlay_height);
@@ -143,6 +143,8 @@
     VideoPlayer.midiAssignment = null;
 
     VideoPlayer.startPoint = false;
+
+    VideoPlayer.videoFilter = null;
 
     function VideoPlayer(top, left, engine, filename) {
       var _self;
@@ -298,17 +300,35 @@
       _self = this;
       rendervids = _self.renderVideos;
       return renderTimer = setInterval(function() {
-        var ctx, settings, vid, _i, _len, _ref, _results;
+        var cPA, ctx, settings, vid, _i, _len, _ref, _results;
         if (_self.canvas.is(":visible")) {
           _ref = _self.engine.videos;
           _results = [];
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             vid = _ref[_i];
             if (!vid.video_el.paused) {
+              console.log("presentationMode, vidfilter = " + vid.videoFilter);
               settings = vid.vidSettings;
               ctx = _self.canvas_el.getContext('2d');
               ctx.globalAlpha = settings.overlayAlpha;
-              _results.push(ctx.drawImage(vid.video_el, settings.offsetX, settings.offsetY, settings.overlay_width, settings.overlay_height));
+              ctx.drawImage(vid.video_el, 0, 0, settings.overlay_width, settings.overlay_height);
+              if (vid.videoFilter != null) {
+                if (vid.videoFilter !== 49) {
+                  cPA = ctx.getImageData(0, 0, settings.overlay_width, settings.overlay_height);
+                  if (vid.videoFilter === 50) {
+                    cPA = filter_to_bw_outline(cPA, cPA, settings.overlay_width, settings.overlay_height);
+                  } else if (vid.videoFilter === 51) {
+                    cPA = filter_invert(cPA, cPA, settings.overlay_width, settings.overlay_height);
+                  } else if (vid.videoFilter === 52) {
+                    cPA = filter_matrix(cPA, cPA, settings.overlay_width, settings.overlay_height);
+                  }
+                  _results.push(ctx.putImageData(cPA, 0, 0));
+                } else {
+                  _results.push(void 0);
+                }
+              } else {
+                _results.push(void 0);
+              }
             } else {
               _results.push(void 0);
             }
@@ -353,6 +373,13 @@
         _results.push(this.videoSources.push('./vids/' + vidsource));
       }
       return _results;
+    };
+
+    MixEngine.prototype.setFilter = function(filterCode) {
+      console.log(filterCode);
+      if (this.activeVideo != null) {
+        return this.activeVideo.videoFilter = filterCode;
+      }
     };
 
     MixEngine.prototype.toggleLoop = function() {
@@ -803,6 +830,10 @@
       this.COMMAND_REMOVE_VIDEO = 88;
       this.COMMAND_DUPLICATE = 68;
       this.COMMAND_VIDSETTINGS = 99;
+      this.COMMAND_FILTER_NONE = 49;
+      this.COMMAND_FILTER_EDGEDETECTION = 50;
+      this.COMMAND_FILTER_INVERT = 51;
+      this.COMMAND_BW = 52;
       this.parentCommands = [this.COMMAND_KEYFRAME, this.COMMAND_TIMELINE, this.COMMAND_VIDSETTINGS];
     }
 
@@ -847,6 +878,8 @@
         engine.toggleEditor();
       } else if (event.charCode === commands.COMMAND_DUPLICATE) {
         engine.duplicateVideo();
+      } else if (event.charCode === commands.COMMAND_FILTER_NONE || event.charCode === commands.COMMAND_FILTER_EDGEDETECTION || event.charCode === commands.COMMAND_FILTER_INVERT || event.charCode === commands.COMMAND_BW) {
+        engine.setFilter(event.charCode);
       } else if (event.charCode === commands.COMMAND_VIDSETTINGS) {
         engine.toggleUiOverlay();
         if (engine.uiOverlay.is(":visible")) {

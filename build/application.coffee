@@ -49,7 +49,7 @@ class VideoSetting
 			max: 2000,
 			value: _self.overlay_width
 			range: false, 
-			step: .1,
+			step: 1,
 			slide: (event, ui)->
 				_self.overlay_width = ui.value
 				$(this).siblings(".overlaywidth").text("canvas width: " + _self.overlay_width)
@@ -63,7 +63,7 @@ class VideoSetting
 			max: 2000,
 			value: _self.overlay_height
 			range: false, 
-			step: .1,
+			step: 1,
 			slide: (event, ui)->
 				_self.overlay_height = ui.value
 				$(this).siblings(".overlayheight").text("canvas height: " + _self.overlay_height)
@@ -124,6 +124,7 @@ class VideoPlayer
 	@loop = true
 	@midiAssignment = null
 	@startPoint = false
+	@videoFilter = null;
 	constructor:  (@top, @left, @engine, @filename)-> 
 		_self = @
 		@keyframes = []
@@ -237,10 +238,29 @@ class PresentationMode
 										if _self.canvas.is(":visible")
 											for vid in _self.engine.videos
 												if !vid.video_el.paused#
+													console.log "presentationMode, vidfilter = " + vid.videoFilter
 													settings = vid.vidSettings
 													ctx = _self.canvas_el.getContext('2d')
 													ctx.globalAlpha = settings.overlayAlpha
-													ctx.drawImage(vid.video_el, settings.offsetX, settings.offsetY, settings.overlay_width, settings.overlay_height)
+
+													ctx.drawImage(vid.video_el, 0, 0, settings.overlay_width, settings.overlay_height)
+
+##@COMMAND_FILTER_EDGEDETECTION = 50 filter_to_bw_outline
+		##@COMMAND_FILTER_INVERT = 51 filter_invert
+		##@COMMAND_BW = 52 filter_matrix
+													if vid.videoFilter?
+														if vid.videoFilter != 49
+															cPA = ctx.getImageData(0, 0, settings.overlay_width, settings.overlay_height)
+															
+															if vid.videoFilter == 50
+																cPA = filter_to_bw_outline(cPA, cPA,settings.overlay_width, settings.overlay_height)
+															else if vid.videoFilter == 51
+																cPA = filter_invert(cPA, cPA,settings.overlay_width, settings.overlay_height)
+															else if vid.videoFilter == 52
+																cPA = filter_matrix(cPA, cPA,settings.overlay_width, settings.overlay_height)
+															ctx.putImageData(cPA, 0, 0)
+
+
 			, 33)
 	hidePresentation: -> 
 		@canvas.css('display', 'none')
@@ -268,6 +288,10 @@ class MixEngine
 		@videoSources = []
 		for vidsource in videosources
 			@videoSources.push('./vids/' + vidsource);
+	setFilter:(filterCode) -> 
+		console.log filterCode
+		if @activeVideo?
+			@activeVideo.videoFilter = filterCode
 	toggleLoop: -> 
 		if @activeVideo?
 			if @activeVideo.loop == false
@@ -521,6 +545,13 @@ class Commands
 		@COMMAND_REMOVE_VIDEO = 88#shft + X = remove selected video
 		@COMMAND_DUPLICATE = 68 # shft + d - duplicate
 		@COMMAND_VIDSETTINGS = 99 # c - configure vidsettings
+		
+		#filters
+		@COMMAND_FILTER_NONE = 49
+		@COMMAND_FILTER_EDGEDETECTION = 50
+		@COMMAND_FILTER_INVERT = 51
+		@COMMAND_BW = 52
+
 		@parentCommands = [@COMMAND_KEYFRAME, @COMMAND_TIMELINE, @COMMAND_VIDSETTINGS]
 #=require <./classes/commands.coffee>
 #=require <./classes/connection.coffee>
@@ -568,6 +599,8 @@ $ ->
 			engine.toggleEditor()
 		else if event.charCode == commands.COMMAND_DUPLICATE
 			engine.duplicateVideo()
+		else if event.charCode == commands.COMMAND_FILTER_NONE || event.charCode == commands.COMMAND_FILTER_EDGEDETECTION || event.charCode == commands.COMMAND_FILTER_INVERT || event.charCode == commands.COMMAND_BW
+			engine.setFilter(event.charCode)
 		else if event.charCode == commands.COMMAND_VIDSETTINGS
 			engine.toggleUiOverlay()
 			if engine.uiOverlay.is(":visible")	

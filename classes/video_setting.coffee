@@ -49,7 +49,7 @@ class VideoSetting
 			max: 2000,
 			value: _self.overlay_width
 			range: false, 
-			step: .1,
+			step: 1,
 			slide: (event, ui)->
 				_self.overlay_width = ui.value
 				$(this).siblings(".overlaywidth").text("canvas width: " + _self.overlay_width)
@@ -63,7 +63,7 @@ class VideoSetting
 			max: 2000,
 			value: _self.overlay_height
 			range: false, 
-			step: .1,
+			step: 1,
 			slide: (event, ui)->
 				_self.overlay_height = ui.value
 				$(this).siblings(".overlayheight").text("canvas height: " + _self.overlay_height)

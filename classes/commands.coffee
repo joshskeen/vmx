@@ -14,4 +14,11 @@ class Commands
 		@COMMAND_REMOVE_VIDEO = 88#shft + X = remove selected video
 		@COMMAND_DUPLICATE = 68 # shft + d - duplicate
 		@COMMAND_VIDSETTINGS = 99 # c - configure vidsettings
+		
+		#filters
+		@COMMAND_FILTER_NONE = 49
+		@COMMAND_FILTER_EDGEDETECTION = 50
+		@COMMAND_FILTER_INVERT = 51
+		@COMMAND_BW = 52
+
 		@parentCommands = [@COMMAND_KEYFRAME, @COMMAND_TIMELINE, @COMMAND_VIDSETTINGS]

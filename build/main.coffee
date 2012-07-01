@@ -44,6 +44,8 @@ $ ->
 			engine.toggleEditor()
 		else if event.charCode == commands.COMMAND_DUPLICATE
 			engine.duplicateVideo()
+		else if event.charCode == commands.COMMAND_FILTER_NONE || event.charCode == commands.COMMAND_FILTER_EDGEDETECTION || event.charCode == commands.COMMAND_FILTER_INVERT || event.charCode == commands.COMMAND_BW
+			engine.setFilter(event.charCode)
 		else if event.charCode == commands.COMMAND_VIDSETTINGS
 			engine.toggleUiOverlay()
 			if engine.uiOverlay.is(":visible")	

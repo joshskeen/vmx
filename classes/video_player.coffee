@@ -5,6 +5,7 @@ class VideoPlayer
 	@loop = true
 	@midiAssignment = null
 	@startPoint = false
+	@videoFilter = null;
 	constructor:  (@top, @left, @engine, @filename)-> 
 		_self = @
 		@keyframes = []
